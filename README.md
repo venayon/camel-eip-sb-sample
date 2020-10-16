@@ -1,1 +1,0 @@
-# camel-eip-sb-sample
