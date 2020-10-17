@@ -12,12 +12,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = CamelApplication.class)
+//@ExtendWith(SpringExtension.class)
+//@WebMvcTest(controllers = CamelApplication.class)
 class ApplicationBuilderTest {
-    @Autowired
+   // @Autowired
     private MockMvc mockMvc;
-    @Autowired
+   // @Autowired
     private ObjectMapper objectMapper;
 
     @Test
