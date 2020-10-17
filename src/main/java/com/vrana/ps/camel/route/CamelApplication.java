@@ -6,6 +6,7 @@ import com.vrana.ps.camel.api.Sample;
 import com.vrana.ps.camel.api.w.Users;
 import com.vrana.ps.camel.processor.SampleProcessor;
 import org.apache.camel.BeanInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.slf4j.Logger;
@@ -55,7 +56,24 @@ class CamelApplication extends RouteBuilder {
                 .route()
                 .to("log:mylogger?showAll=true")
                 .process(sampleProcessor)
-                .endRest();
+                .endRest()
+
+                .post("/order").consumes(MediaType.APPLICATION_JSON_VALUE)
+                .type(Sample.class).outType(Response.class)
+                .id("stock-order")
+                .route()
+                .to("log:mylogger?showAll=true")
+                .to("direct:validateJson");
+
+                 from("direct:validateJson")
+                .routeId("direct-route-json-validator")
+                .tracing().log("Came to route")
+                .to("json-validator:myschema.json")
+                .transform().simple("Hello Shiva")
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+        ;
+
+
     }
 
 }
