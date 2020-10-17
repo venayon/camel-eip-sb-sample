@@ -19,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
         classes = { CamelAutoConfiguration.class})
 @ContextConfiguration
 public class TestMe {
-    //https://www.baeldung.com/apache-camel-spring-boot
+
     @Autowired
     protected CamelContext camelContext;
     @EndpointInject("mock:foo")
