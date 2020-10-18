@@ -13,10 +13,8 @@
       "type": "string"
     },
     "price": {
-      "type": "number",
-      "minimum": 0,
-      "exclusiveMinimum": true
-    }
+      "type": "number"
+         }
   },
   "required": ["id", "name", "price"]
 }

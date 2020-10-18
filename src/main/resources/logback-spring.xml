@@ -2,7 +2,6 @@
 <configuration>
 
     <property name="LOGS" value="./logs"/>
-
     <appender name="Console"
               class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -12,12 +11,10 @@
         </layout>
     </appender>
 
-    <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="Console"/>
     </root>
 
-    <!-- LOG "com.kb*" at TRACE level -->
     <logger name="com.vrana" level="debug" additivity="false">
         <appender-ref ref="Console"/>
     </logger>
