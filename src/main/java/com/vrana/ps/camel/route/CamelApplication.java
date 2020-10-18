@@ -5,10 +5,7 @@ import com.vrana.ps.camel.api.OrderJsn;
 import com.vrana.ps.camel.api.Response;
 import com.vrana.ps.camel.api.Sample;
 import com.vrana.ps.camel.processor.SampleProcessor;
-import org.apache.camel.BeanInject;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jsonvalidator.JsonValidationException;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -38,7 +35,7 @@ class CamelApplication extends RouteBuilder {
         restConfiguration()
                 .port(serverPort)
                 .component("servlet")
-                .bindingMode(RestBindingMode.auto);
+                .bindingMode(RestBindingMode.json_xml);
 
 
         onException(JsonValidationException.class)
@@ -65,7 +62,7 @@ class CamelApplication extends RouteBuilder {
 
                 .post("/order")
                 .consumes(MediaType.APPLICATION_JSON_VALUE)
-                .type(OrderJsn.class)
+                //.type(OrderJsn.class)
                 .outType(Response.class)
                 .id("stock-order")
                 .route()
@@ -75,10 +72,11 @@ class CamelApplication extends RouteBuilder {
                  from("direct:validateJson")
                 .routeId("direct-route-json-validator")
                 .tracing().log("Came to route")
-                .to("json-validator:classpath:stock.json")
-                         .process(sampleProcessor)
-                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200));
-
+                        // .doTry()
+                .to("json-validator:classpath:stock.json").
+                        // .doCatch(CamelException.class)
+                        // .doFinally().
+                         process(sampleProcessor).setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200));
 
 
 
