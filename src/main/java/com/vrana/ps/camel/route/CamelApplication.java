@@ -1,10 +1,11 @@
 package com.vrana.ps.camel.route;
 
 
-import com.vrana.ps.camel.api.OrderJsn;
-import com.vrana.ps.camel.api.Response;
-import com.vrana.ps.camel.api.Sample;
+import com.vrana.ps.camel.api.*;
+import com.vrana.ps.camel.api.json.EmployeeJson;
+import com.vrana.ps.camel.api.xml.Employee;
 import com.vrana.ps.camel.processor.SampleProcessor;
+import com.vrana.ps.camel.processor.XmlProcessor;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jsonvalidator.JsonValidationException;
@@ -26,59 +27,49 @@ class CamelApplication extends RouteBuilder {
     @BeanInject(value ="sampleProcessor" )
     private SampleProcessor sampleProcessor;
 
+    @BeanInject(value ="xmlProcessor" )
+    private XmlProcessor xmlProcessor;
+
     @Override
     public void configure() throws Exception {
         LOGGER.info(" Rest Started " + serverPort);
         CamelContext context = new DefaultCamelContext();
         context.setTypeConverterStatisticsEnabled(true);
 
-        restConfiguration()
+   restConfiguration()
                 .port(serverPort)
                 .component("servlet")
                 .bindingMode(RestBindingMode.json_xml);
-
 
         onException(JsonValidationException.class)
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(501));
 
         rest("/api")
-                .get("/").route().transform(simple("Shiva help me")).endRest()
-
-                .post("/add").type(Sample.class)
+                .post("/userJson").type(Sample.class)
                 .produces(MediaType.APPLICATION_JSON_VALUE)
+                .type(EmployeeJson.class).outType(Response.class)
                 .route()
                 .to("log:mylogger?showAll=true")
-                .process(sampleProcessor)
+                .process(xmlProcessor)
                 .endRest()
 
-
-                .post("/addUser")
-                .consumes(MediaType.APPLICATION_JSON_VALUE)
-                .type(Sample.class).outType(Response.class)
-                .route()
+                .post("/userXml")
                 .to("log:mylogger?showAll=true")
-                .process(sampleProcessor)
-                .endRest()
-
-                .post("/order")
-                .consumes(MediaType.APPLICATION_JSON_VALUE)
-                //.type(OrderJsn.class)
-                .outType(Response.class)
-                .id("stock-order")
+                //.consumes(MediaType.APPLICATION_XML_VALUE)
+                //.produces(MediaType.APPLICATION_JSON_VALUE).outType(Response.class)
                 .route()
-                .to("log:mylogger?showAll=true")
-                .to("direct:validateJson");
+                .tracing().log(LoggingLevel.ERROR, "userXml ------- coming.............")
+                .routeId("XML-VALIDATION")
+                .to("validator:employe.xsd")
+                .process(xmlProcessor)
+                .endRest();
 
                  from("direct:validateJson")
                 .routeId("direct-route-json-validator")
                 .tracing().log("Came to route")
-                        // .doTry()
-                .to("json-validator:classpath:stock.json").
-                        // .doCatch(CamelException.class)
-                        // .doFinally().
-                         process(sampleProcessor).setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200));
-
-
+                .to("json-validator:classpath:stock.json")
+                .process(sampleProcessor)
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200));
 
     }
 

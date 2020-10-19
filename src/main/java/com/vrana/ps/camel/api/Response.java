@@ -1,14 +1,22 @@
 package com.vrana.ps.camel.api;
 
-public class Response {
-    public String getMessage() {
-        return message;
-    }
+public class Response<T> {
 
-    public void setMessage(String message) {
+    public Response(){
+        super();
+    }
+    public Response(T message) {
         this.message = message;
     }
 
-    private String message;
+    public T getMessage() {
+        return message;
+    }
+
+    public void setMessage(T message) {
+        this.message = message;
+    }
+
+    private T message;
 
 }

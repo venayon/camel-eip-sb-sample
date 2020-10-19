@@ -13,7 +13,7 @@ public class Order {
     @XmlElement
     private String partName;
     @XmlElement
-    private int amount;
+        private int amount;
     @XmlElement
     private String customerName;
 
