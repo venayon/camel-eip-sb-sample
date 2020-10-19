@@ -1,24 +1,16 @@
 package com.vrana.ps.camel.processor;
 
-
-import com.vrana.ps.EmpJsn;
 import com.vrana.ps.camel.api.xml.Employee;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 
-
-@Component(value = "sampleProcessor")
-public class SampleProcessor implements Processor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SampleProcessor.class);
+@Component(value = "xmlProcessor")
+public class XmlProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
-        EmpJsn ej = (EmpJsn) exchange.getIn().getBody(EmpJsn.class);
-        LOGGER.info(" {} ",ej);
         Employee emp = getEmploye();
         exchange.getMessage().setBody(emp);
 
